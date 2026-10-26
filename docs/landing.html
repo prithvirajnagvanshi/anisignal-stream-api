@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#10091c" />
+  <title>AniSignal Media API — Anime Signal Station</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --night:#10091c; --ink:#f8f2ff; --soft:#cbbbdc; --pink:#ff4fa3; --cyan:#5de9f5; --yellow:#ffd76a; --card:#1b102c; --line:#453158; --mono:'DM Mono',monospace; --display:'Space Grotesk',sans-serif; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; min-height:100vh; overflow-x:hidden; color:var(--ink); background:var(--night); font-family:var(--display); -webkit-font-smoothing:antialiased; }
+    body:before { content:''; position:fixed; inset:0; pointer-events:none; opacity:.42; background-image:radial-gradient(#fff 1px,transparent 1px),radial-gradient(#fff 1px,transparent 1px); background-position:0 0,39px 61px; background-size:83px 97px,127px 139px; mask-image:linear-gradient(to bottom,black,transparent 88%); }
+    body:after { content:''; position:fixed; inset:auto -10% -18% -10%; height:55vh; pointer-events:none; background:radial-gradient(ellipse,rgba(255,79,163,.18),transparent 65%); filter:blur(22px); }
+    body { background:radial-gradient(circle at 78% 18%,rgba(93,233,245,.09),transparent 24%),radial-gradient(circle at 18% 72%,rgba(255,79,163,.12),transparent 26%),var(--night); }
+    .anime-sky { position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+    .anime-sky span { position:absolute; display:block; opacity:.7; }
+    .spark { width:6px; height:6px; background:var(--yellow); border-radius:50%; box-shadow:0 0 14px var(--yellow); animation:drift 7s ease-in-out infinite; }
+    .spark:before,.spark:after { content:''; position:absolute; inset:-5px 2px; background:var(--yellow); opacity:.45; transform:rotate(45deg); }
+    .spark:after { transform:rotate(-45deg); }
+    .spark.one { top:18%; left:7%; animation-delay:-1s; }
+    .spark.two { top:64%; left:49%; transform:scale(.6); animation-delay:-4s; }
+    .spark.three { top:30%; right:8%; transform:scale(.8); animation-delay:-2.4s; }
+    .orbit { width:78px; height:78px; border:1px solid rgba(93,233,245,.32); border-radius:50%; animation:orbitFloat 10s ease-in-out infinite; }
+    .orbit:after { content:'✦'; position:absolute; top:-10px; right:4px; color:var(--pink); font-size:14px; animation:spin 8s linear infinite; }
+    .orbit.a { top:12%; right:20%; transform:rotate(25deg); }
+    .orbit.b { bottom:18%; left:6%; width:48px; height:48px; animation-delay:-5s; }
+    .paper { width:19px; height:25px; border:1px solid var(--cyan); background:rgba(93,233,245,.1); transform:rotate(18deg); animation:paperFloat 9s ease-in-out infinite; }
+    .paper:before { content:'>'; position:absolute; left:5px; top:3px; color:var(--cyan); font:10px var(--mono); }
+    .paper.c { top:42%; right:4%; animation-delay:-3s; }
+    .paper.d { bottom:11%; right:22%; transform:rotate(-22deg) scale(.7); animation-delay:-6s; }
+    @keyframes drift { 0%,100% { transform:translate(0,0) rotate(0); } 50% { transform:translate(16px,-24px) rotate(90deg); } }
+    @keyframes orbitFloat { 0%,100% { margin-top:0; } 50% { margin-top:-18px; } }
+    @keyframes paperFloat { 0%,100% { translate:0 0; } 50% { translate:-12px -22px; rotate:8deg; } }
+    a { color:inherit; text-decoration:none; }
+    .wrap { width:min(1160px,calc(100% - 36px)); margin:auto; position:relative; z-index:1; }
+    header { display:flex; align-items:center; justify-content:space-between; padding:26px 0; border-bottom:1px solid var(--line); }
+    .brand { display:flex; align-items:center; gap:12px; font-weight:700; letter-spacing:-.04em; }
+    .brand-mark { display:grid; place-items:center; width:38px; height:38px; color:var(--night); background:var(--yellow); border-radius:12px 5px 12px 5px; font:700 14px var(--mono); transform:rotate(-8deg); box-shadow:4px 4px 0 var(--pink); }
+    .brand-name { font-size:17px; }
+    .brand-name small { display:block; margin-top:2px; color:var(--soft); font:10px var(--mono); letter-spacing:.08em; text-transform:uppercase; }
+    .status { display:flex; align-items:center; gap:8px; color:var(--soft); font:11px var(--mono); }
+    .status i { display:block; width:8px; height:8px; background:var(--cyan); border-radius:50%; box-shadow:0 0 14px var(--cyan); animation:pulse 1.7s infinite; }
+    @keyframes pulse { 50% { opacity:.35; transform:scale(.75); } }
+    main { display:grid; grid-template-columns:1.04fr .96fr; gap:70px; align-items:center; padding:86px 0 106px; }
+    .tag { display:inline-flex; align-items:center; gap:9px; color:var(--cyan); font:11px var(--mono); letter-spacing:.09em; text-transform:uppercase; }
+    .tag:before { content:'✦'; color:var(--yellow); font-size:16px; }
+    h1 { max-width:650px; margin:19px 0 22px; font-size:clamp(52px,7.5vw,102px); line-height:.86; letter-spacing:-.085em; }
+    h1 em { color:var(--pink); font-style:normal; text-shadow:4px 4px 0 #702456; }
+    .intro { max-width:515px; color:var(--soft); font-size:16px; line-height:1.75; }
+    .actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:32px; }
+    .button { display:inline-flex; align-items:center; gap:10px; padding:13px 17px; border:1px solid var(--pink); border-radius:8px; color:var(--pink); font-size:13px; font-weight:700; transition:.2s; }
+    .button:hover { color:var(--night); background:var(--pink); transform:translateY(-3px); box-shadow:0 8px 24px rgba(255,79,163,.25); }
+    .button.primary { color:var(--night); background:var(--yellow); border-color:var(--yellow); }
+    .button.primary:hover { background:#ffe79e; border-color:#ffe79e; }
+    .arrow { font-size:18px; }
+    .station { position:relative; padding:10px; transform:rotate(2deg); }
+    .station:before { content:'ANISIGNAL // STATION 04'; position:absolute; top:-19px; right:18px; color:var(--yellow); font:10px var(--mono); letter-spacing:.1em; transform:rotate(-2deg); }
+    .screen { position:relative; overflow:hidden; border:2px solid var(--pink); border-radius:18px 5px 18px 5px; background:linear-gradient(145deg,#24133b,#130d22); box-shadow:13px 13px 0 var(--cyan),0 0 60px rgba(255,79,163,.16); }
+    .screen:before { content:''; position:absolute; inset:0; opacity:.2; background:repeating-linear-gradient(0deg,transparent 0 5px,#fff 6px 7px); pointer-events:none; }
+    .screen-top { display:flex; justify-content:space-between; padding:17px 19px; border-bottom:1px solid var(--line); color:var(--soft); font:10px var(--mono); letter-spacing:.08em; }
+    .screen-top b { color:var(--cyan); font-weight:500; }
+    .core { display:grid; place-items:center; min-height:230px; padding:28px 22px; }
+    .signal-art { position:relative; width:min(100%,340px); height:230px; animation:bookFloat 5s ease-in-out infinite; filter:drop-shadow(0 18px 22px rgba(255,79,163,.42)); }
+    .signal-art img { display:block; width:100%; height:100%; object-fit:contain; object-position:center; mix-blend-mode:screen; mask-image:linear-gradient(to bottom,black 80%,transparent 100%); }
+    .signal-art:before { content:'✦'; position:absolute; z-index:2; top:22px; left:26px; color:var(--yellow); font-size:22px; text-shadow:0 0 16px var(--yellow); animation:shardFloat 3.5s ease-in-out infinite; }
+    .signal-art:after { content:'✦'; position:absolute; z-index:2; right:28px; bottom:25px; color:var(--cyan); font-size:16px; text-shadow:0 0 14px var(--cyan); animation:shardFloat 3.5s ease-in-out infinite reverse; }
+    @keyframes bookFloat { 0%,100% { transform:translateY(0) rotate(-1deg); } 50% { transform:translateY(-9px) rotate(1deg) scale(1.02); } }
+    @keyframes characterFloat { 50% { transform:translateY(-8px) rotate(-1deg) scale(1.02); } }
+    @keyframes shardFloat { 50% { translate:7px -10px; rotate:18deg; } }
+
+    .routes { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:18px; border-top:1px solid var(--line); }
+    .route { padding:13px; border:1px solid var(--line); border-radius:9px; background:rgba(10,5,18,.36); }
+    .route b { display:block; color:var(--cyan); font:11px var(--mono); font-weight:500; }
+    .route span { display:block; margin-top:7px; color:var(--soft); font-size:11px; }
+    .providers { grid-column:1/-1; display:flex; flex-wrap:wrap; gap:7px; margin-top:3px; }
+    .chip { padding:6px 9px; border:1px solid #654275; border-radius:100px; color:var(--ink); background:#29183d; font:10px var(--mono); }
+    .chip:before { content:'✦ '; color:var(--pink); }
+    footer { display:flex; justify-content:space-between; padding:18px 0 28px; border-top:1px solid var(--line); color:#8d789f; font:10px var(--mono); }
+    footer span:last-child { color:var(--cyan); }
+    @media (max-width:760px) { .wrap { width:min(100% - 28px,560px); } header { padding:19px 0; } .status { font-size:0; } .status i { width:9px; height:9px; } main { display:block; padding:66px 0 86px; } h1 { font-size:clamp(57px,17vw,89px); } .intro { font-size:14px; } .station { margin-top:71px; transform:rotate(1deg); } .station:before { font-size:8px; top:-16px; } .screen { box-shadow:7px 7px 0 var(--cyan); } .core { min-height:215px; } footer { gap:12px; flex-direction:column; } }
+    @media (prefers-reduced-motion:reduce) { *,*:before,*:after { animation:none !important; transition:none !important; } }
+  </style>
+</head>
+<body>
+  <div class="anime-sky" aria-hidden="true">
+    <span class="spark one"></span><span class="spark two"></span><span class="spark three"></span>
+    <span class="orbit a"></span><span class="orbit b"></span>
+    <span class="paper c"></span><span class="paper d"></span>
+  </div>
+  <div class="wrap">
+    <header><a class="brand" href="/"><span class="brand-mark">AS</span><span class="brand-name">AniSignal<small>media api / private</small></span></a><div class="status"><i></i> RAILWAY // ONLINE</div></header>
+    <main>
+      <section>
+        <div class="tag">the hidden media station</div>
+        <h1>Powering the<br /><em>next episode.</em></h1>
+        <p class="intro">A tiny private API that hunts down playable anime streams for Ani-Signal. Three sources, one clean signal, zero catalog noise.</p>
+        <div class="actions"><a class="button primary" href="/docs">Open the routes <span class="arrow">↗</span></a><a class="button" href="#providers">Meet the sources <span class="arrow">↓</span></a></div>
+      </section>
+      <aside class="station" aria-label="AniSignal service station">
+        <div class="screen"><div class="screen-top"><b>● LIVE FEED</b><span>NODE 04 / PRIVATE</span></div><div class="core" aria-label="API mascot artwork"><div class="signal-art"><img src="api-mascot.png" alt="API, the cute anime-inspired media relay mascot" /></div></div><div class="routes"><div class="route"><b>GET /health</b><span>200 · operational</span></div><div class="route"><b>GET /resolve</b><span>episode → stream</span></div><div class="providers" id="providers"><span class="chip">Anikoto</span><span class="chip">AnimeGG</span><span class="chip">AniWaves</span></div></div></div>
+      </aside>
+    </main>
+    <footer><span>© 2026 ANISIGNAL MEDIA API</span><span>made for anime fans · not a public catalog</span></footer>
+  </div>
+</body>
+</html>
