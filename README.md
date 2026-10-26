@@ -1,12 +1,12 @@
 <div align="center">
 
-<img src="docs/logo.svg" width="80" height="80" alt="AniSignal logo" />
+<img src="public/anisignal-logo.png" width="240" alt="AniStream API logo" />
 
 # AniSignal Stream API
 
 **A small JSON API for finding anime episodes and resolving playable streams.**
 
-[![GitHub stars](https://img.shields.io/github/stars/fakeapple-alt3/anisignal-stream-api?style=flat-square&color=yellow)](https://github.com/fakeapple-alt3/anisignal-stream-api/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/prithvirajnagvanshi/anisignal-stream-api?style=flat-square&color=yellow)](https://github.com/prithvirajnagvanshi/anisignal-stream-api/stargazers)
 
 </div>
 
@@ -80,7 +80,7 @@ Examples:
 Requires Node.js. Clone the repository, install dependencies, and start the server:
 
 ```bash
-git clone https://github.com/fakeapple-alt3/anisignal-stream-api.git
+git clone https://github.com/prithvirajnagvanshi/anisignal-stream-api.git
 cd anisignal-stream-api
 npm install
 cp .env.example .env
