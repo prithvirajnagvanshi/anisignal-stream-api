@@ -13,9 +13,6 @@ const STATIC = {
   "/":           { file: "docs/landing.html", mime: "text/html" },
   "/docs":       { file: "docs/index.html",   mime: "text/html" },
   "/style.css":  { file: "docs/style.css",    mime: "text/css"  },
-  "/logo.png":   { file: "public/anisignal-symbol.png", mime: "image/png" },
-  "/death-note-book.png": { file: "docs/death-note-book.png", mime: "image/png" },
-  "/api-mascot.png":       { file: "docs/api-mascot.png",       mime: "image/png" },
 };
 
 function serveStatic(res, entry) {
