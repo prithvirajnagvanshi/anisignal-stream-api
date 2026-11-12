@@ -95,11 +95,9 @@ Copy `.env.example` to `.env` and adjust settings as needed:
 
 | Variable | Example default | Purpose |
 | --- | --- | --- |
-| `PORT` | `4000` | Local Node server port. |
-| `CACHE_ENABLED` | `false` | Enables the API cache when set to `true`. |
-| `DEFAULT_REDIS_TTL` | `900` | Default cache lifetime in seconds. |
-| `UPSTASH_REDIS_REST_URL` | — | Upstash Redis REST URL, for Redis-backed caching. |
-| `UPSTASH_REDIS_REST_TOKEN` | — | Upstash Redis REST token, for Redis-backed caching. |
+| `PORT` | `4000` | Local Node server port. Railway assigns the deployed service's port automatically. |
+
+The three scraper providers work without Redis credentials. Redis-backed caching is optional and remains disabled unless `CACHE_ENABLED=true`. If you choose to enable it later, add a real `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` in the hosting service; `DEFAULT_REDIS_TTL` is optional and defaults to 900 seconds. Do not deploy placeholder credentials.
 
 When deploying on a hosting service, configure environment variables in that service’s project settings rather than committing secrets to the repository.
 
