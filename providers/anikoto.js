@@ -1,7 +1,7 @@
 import { getMedia } from '../core/anilist.js';
 import { extractMegaPlayDetails } from "../extractors/megaplay.js";
 
-const ANIKOTO = "https://anikototv.to";
+const ANIKOTO = "https://anikoto.cz";
 const MAPPER = "https://mapper.nekostream.site/api/mal";
 const ANIZIP = "https://api.ani.zip/mappings";
 const SPOOF_REF = "https://hianimes.re/";
@@ -83,25 +83,46 @@ function scoreCandidate(cand, primaryEn, primaryRom, synonyms) {
   return score;
 }
 
+function htmlAttribute(attributes, name) {
+  return attributes.match(new RegExp(`\\b${name}\\s*=\\s*(["'])(.*?)\\1`, "i"))?.[2] ?? "";
+}
+
+function decodeHtml(value) {
+  return String(value ?? "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">");
+}
+
 async function searchAnikoto(query) {
   const searchHtml = await httpGet(`${ANIKOTO}/filter?keyword=${encodeURIComponent(query)}`, { Referer: `${ANIKOTO}/` });
-  const candidates = [];
+  const titled = [];
+  const fallback = [];
 
-  const re = /<a\s+class="name d-title"\s+href="https:\/\/anikototv\.to\/watch\/([^"/]+)(?:\/ep-\d+)?"[^>]*data-jp="([^"]*)"[^>]*>([\s\S]*?)<\/a>/g;
-  let m;
-  while ((m = re.exec(searchHtml)) !== null) {
-    const slug = m[1];
-    const jp = m[2].trim();
-    const name = m[3].replace(/<[^>]*>/g, "").trim();
-    candidates.push({ slug, name, jp });
+  for (const [, attributes, inner] of searchHtml.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
+    const href = htmlAttribute(attributes, "href");
+    let url;
+    try { url = new URL(href, ANIKOTO); } catch { continue; }
+
+    const slug = url.pathname.match(/^\/watch\/([^/]+)/i)?.[1];
+    if (!slug) continue;
+
+    const classes = htmlAttribute(attributes, "class").split(/\s+/);
+    const name = decodeHtml(inner.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim());
+    const candidate = {
+      slug: decodeURIComponent(slug),
+      name: name || decodeURIComponent(slug),
+      jp: decodeHtml(htmlAttribute(attributes, "data-jp")).trim(),
+    };
+
+    if (classes.includes("name") && classes.includes("d-title")) titled.push(candidate);
+    else fallback.push(candidate);
   }
 
-  if (!candidates.length) {
-    const reFallback = /<a\s+href="https:\/\/anikototv\.to\/watch\/([^"/]+)(?:\/ep-\d+)?"[^>]*>([\s\S]*?)<\/a>/g;
-    while ((m = reFallback.exec(searchHtml)) !== null) {
-      candidates.push({ slug: m[1], name: m[1], jp: "" });
-    }
-  }
+  const candidates = titled.length ? titled : fallback;
 
   const seen = new Set();
   return candidates.filter(c => {
@@ -117,17 +138,24 @@ async function findAnikotoShow(media) {
   const synonyms = media.synonyms || [];
 
   const keywords = [...new Set([primaryEn, primaryRom, ...synonyms].filter(Boolean))];
+  const searches = keywords.slice(0, 5);
   const allCandidatesMap = new Map();
+  const searchErrors = [];
 
-  for (const k of keywords.slice(0, 5)) {
-    const res = await searchAnikoto(k).catch(() => []);
-    for (const c of res) {
-      allCandidatesMap.set(c.slug, c);
+  for (const keyword of searches) {
+    try {
+      const candidates = await searchAnikoto(keyword);
+      for (const candidate of candidates) allCandidatesMap.set(candidate.slug, candidate);
+    } catch (error) {
+      searchErrors.push(error);
     }
   }
 
   const candidates = Array.from(allCandidatesMap.values());
   if (!candidates.length) {
+    if (searches.length && searchErrors.length === searches.length) {
+      throw new Error(`Anikoto search unavailable: ${searchErrors[0].message}`);
+    }
     throw new Error(`No results found on Anikoto for: ${primaryEn || primaryRom}`);
   }
 
